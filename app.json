@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "ravenriseapp",
     "name": "ravenrise_app",
     "slug": "ravenrise_app",
     "version": "1.0.0",
