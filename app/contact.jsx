@@ -12,7 +12,7 @@ const Contact = () => {
   )
 }
 
-export default About
+export default Contact
 
 const styles = StyleSheet.create({
     container:{
