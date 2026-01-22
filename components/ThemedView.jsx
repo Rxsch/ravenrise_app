@@ -1,3 +1,4 @@
+//This page is uses the right colors depending on the theme
 import { View, useColorScheme } from 'react-native'
 import React from 'react'
 import { Colors } from '../constants/Colors'
