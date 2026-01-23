@@ -1,6 +1,6 @@
 //Component style for regular text
 import { Text, useColorScheme} from 'react-native'
-import {Colors } from '../constant/Colors'
+import {Colors } from '../constants/Colors'
 
 const ThemedText = ({ style, title = false, ...props }) =>{
     const colorScheme = useColorScheme()
