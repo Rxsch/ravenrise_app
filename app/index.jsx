@@ -16,7 +16,7 @@ const Home = () => {
       <Text style={styles.title}>The number 1</Text>
 
       <Spacer height={10}/>
-      {/*Why is it error if ThemedText style={styles.title} title={true} */}
+      {/*Why is it error if ThemedText style={styles.title} title={true} 23:30 */}
       <ThemedText>
         Los numero 1 en los bilboard
       </ThemedText>
