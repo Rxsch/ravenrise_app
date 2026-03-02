@@ -24,21 +24,17 @@ export default Profile
 const styles = StyleSheet.create({
    container:{
         flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: "center",
+        justifyContent: "center",
     },
     title: {
         fontWeight: 'bold',
         fontSize: 18
     },
-    img: {
-        height: 150,
-        width: 150,
-        marginVertical: 20,
-    },
-    link:{
-        marginVertical: 10,
-        borderBottomWidth: 1
+    heading:{
+    fontWeight:"bold",
+    fontsize: 10,
+    textAlign: "center",
     },
 
 })
