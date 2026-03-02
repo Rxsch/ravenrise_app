@@ -1,9 +1,43 @@
 import { Tabs } from 'expo-router'
+import { useColorScheme } from 'react-native'
+import { Colors } from '../../constants/Colors'
+import { StyleSheet} from 'react-native'
 
 const Dashboardlayout= () => {
+    const colorScheme = useColorScheme()
+    const theme = Colors[colorScheme] ?? Colors.light
   return ( 
-    <Tabs />
+    <Tabs 
+    screenOptions={{headerShown: false, tabBarStyle: 
+        {backgroundColor: theme.navBackground,
+         paddingTop: 10,
+         height: 90
+         },
+        tabActiveTintColor: theme.iconColorFocused,
+        tabBarInactiveTintColor: theme.iconColorFocused
+    }}
+    >
+    <Tabs.Screen name= "profile" options={{title: 'Profile'}} />
+    </Tabs>
     )
 }
 
 export default Dashboardlayout
+
+const styles = StyleSheet.create({
+   container:{
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    title: {
+        fontWeight: 'bold',
+        fontSize: 18
+    },
+    heading:{
+    fontWeight:"bold",
+    fontsize: 10,
+    textAlign: "center",
+    },
+
+})
