@@ -23,6 +23,7 @@ const Home = () => {
       <Spacer/>
      <Link href="/about" style={styles.link}> About Page</Link>
       <Link href="/contact" style={styles.link}> Contact Page</Link>
+      <Link href="/profile" style={styles.link}> Profile</Link>
     </ThemedView>
   )
 }
