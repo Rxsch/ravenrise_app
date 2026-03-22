@@ -4,6 +4,8 @@ import { StyleSheet, Text, View, useColorScheme } from 'react-native'
 import {Colors} from "../constants/Colors"
 
 const About = () => {
+    const colorScheme = useColorScheme()
+    const theme = Colors[colorScheme] ?? Colors.light
    
 
   return (

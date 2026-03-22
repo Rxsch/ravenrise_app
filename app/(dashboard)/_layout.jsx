@@ -2,9 +2,10 @@ import { Tabs } from 'expo-router'
 import { useColorScheme } from 'react-native'
 import { Colors } from '../../constants/Colors'
 import { StyleSheet} from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
 
 const Dashboardlayout= () => {
-    const colorScheme = useColorScheme()
+    const colorScheme = useColorScheme() // Select icons by background
     const theme = Colors[colorScheme] ?? Colors.light
   return ( 
     <Tabs 
@@ -17,7 +18,14 @@ const Dashboardlayout= () => {
         tabBarInactiveTintColor: theme.iconColorFocused
     }}
     >
-    <Tabs.Screen name= "profile" options={{title: 'Profile'}} />
+    <Tabs.Screen name= "profile" options={{title: 'Profile', tabBarIcon: ({ focused }) => (
+        <Ionicons
+        size={24}
+        name= { focused ? 'person' : 'person-outline'} //Icon name 
+        color={ focused ? theme.iconColorFocused : theme.iconColor}
+        />
+    )}} />
+
     </Tabs>
     )
 }
