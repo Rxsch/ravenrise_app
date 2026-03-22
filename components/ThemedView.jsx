@@ -17,8 +17,8 @@ const ThemedView = ({style, children, safe=false, ...props}) => {
     {children}
    </View>
 )
-const insets = useSafeAreaInsets()ha
-
+//Safe
+const insets = useSafeAreaInsets()
 return( 
     <View
      style= {[{
