@@ -5,9 +5,9 @@ import Spacer from "../../components/Spacer"
 import ThemedText from "../../components/ThemedText"
 import ThemedView from "../../components/ThemedView"
 
-const Clock = () => {
+const Stats = () => {
   return (
-    //Clock part should go here
+    // part should go here
    <ThemedView style ={styles.container}>
     
     <ThemedText title={true} style={styles.heading}>
@@ -20,7 +20,7 @@ const Clock = () => {
   )
 }
 
-export default Clock
+export default Stats
 
 const styles = StyleSheet.create({
    container:{

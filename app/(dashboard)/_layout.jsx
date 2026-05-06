@@ -18,21 +18,33 @@ const Dashboardlayout= () => {
         tabBarInactiveTintColor: theme.iconColorFocused
     }}
     >
+    {/*Clock Tab */}
     <Tabs.Screen 
-    name= "profile" 
-    options={{title: 'Profile', tabBarIcon: ({ focused }) => (
-        <Ionicons
-        size={24}
-        name= { focused ? 'person' : 'person-outline'} //Icon name 
-        color={ focused ? theme.iconColorFocused : theme.iconColor}
-        />
-    )}} />
-    <Tabs.Screen 
-    name= "clock" 
+    name= "index" 
     options={{title: 'Clock', tabBarIcon: ({ focused }) => (
         <Ionicons
         size={24}
         name= { focused ? 'time' : 'time-outline'} //Icon name 
+        color={ focused ? theme.iconColorFocused : theme.iconColor}
+        />
+    )}} />
+     {/*Stats Tab */}
+    <Tabs.Screen 
+    name= "stats" 
+    options={{title: 'Statistics', tabBarIcon: ({ focused }) => (
+        <Ionicons
+        size={24}
+        name= { focused ? 'stats-chart' : 'stats-chart-outline'} //Icon name 
+        color={ focused ? theme.iconColorFocused : theme.iconColor}
+        />
+    )}} />
+     {/*Settings Tab */}
+    <Tabs.Screen 
+    name= "settings" 
+    options={{title: 'Settings', tabBarIcon: ({ focused }) => (
+        <Ionicons
+        size={24}
+        name= { focused ? 'settings-sharp' : 'settings-outline'} //Icon name 
         color={ focused ? theme.iconColorFocused : theme.iconColor}
         />
     )}} />
