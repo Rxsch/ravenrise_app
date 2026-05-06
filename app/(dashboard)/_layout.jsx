@@ -14,14 +14,25 @@ const Dashboardlayout= () => {
          paddingTop: 10,
          height: 90
          },
-        tabActiveTintColor: theme.iconColorFocused,
+        tabBarActiveTintColor: theme.iconColorFocused,
         tabBarInactiveTintColor: theme.iconColorFocused
     }}
     >
-    <Tabs.Screen name= "profile" options={{title: 'Profile', tabBarIcon: ({ focused }) => (
+    <Tabs.Screen 
+    name= "profile" 
+    options={{title: 'Profile', tabBarIcon: ({ focused }) => (
         <Ionicons
         size={24}
         name= { focused ? 'person' : 'person-outline'} //Icon name 
+        color={ focused ? theme.iconColorFocused : theme.iconColor}
+        />
+    )}} />
+    <Tabs.Screen 
+    name= "clock" 
+    options={{title: 'Clock', tabBarIcon: ({ focused }) => (
+        <Ionicons
+        size={24}
+        name= { focused ? 'time' : 'time-outline'} //Icon name 
         color={ focused ? theme.iconColorFocused : theme.iconColor}
         />
     )}} />
