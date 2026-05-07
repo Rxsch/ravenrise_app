@@ -31,39 +31,49 @@ const fmt = (secs) => {
 const Home = () => {
   const [mode, setMode]           = useState('focus') //Mode being used
   const [remaining, setRemaining] = useState(DURATIONS.focus) //Time left
-  const [running, setRunning]     = useState(false) //
-  const [session, setSession]     = useState(1)
-  const intervalRef               = useRef(null)
+  const [running, setRunning]     = useState(false) //Running state of timmer
+  const [session, setSession]     = useState(1) //Number of completed sessions
+  const intervalRef               = useRef(null)//Stores the interval ID
 
-  const color = MODE_COLORS[mode]
+  const color = MODE_COLORS[mode] //Color being used
 
   useEffect(() => {
-    if (running) {
-      intervalRef.current = setInterval(() => {
-        setRemaining(r => {
-          if (r <= 1) {
-            clearInterval(intervalRef.current)
-            setRunning(false)
-            handleComplete()
-            return 0
+    if (running) { //If timer is running
+      intervalRef.current = setInterval(() => {  //Save the interval ID 
+        setRemaining(r => {  //Update the remaining time using current value
+          if (r <= 1) { //Remaining is less or equal to 1
+            clearInterval(intervalRef.current) //Stop
+            setRunning(false) //Pause timer
+            handleComplete() //Next session
+            return 0 //Remaining is zero
           }
           return r - 1
         })
       }, 1000)
     } else {
-      clearInterval(intervalRef.current)
+      clearInterval(intervalRef.current) //Stop interval when timer is paused
     }
-    return () => clearInterval(intervalRef.current)
+    return () => clearInterval(intervalRef.current) //Clean up
   }, [running, mode])
 
+  //Next timer after completion function
   const handleComplete = () => {
-    if (mode === 'focus') {
-      setSession(s => s + 1)
-      switchMode(session % 4 === 0 ? 'long' : 'short')
-    } else {
-      switchMode('focus')
-    }
+  //If break go back focus
+    if (mode !== 'focus') {
+    switchMode('focus')
+    return
   }
+  //No more than 50 sessions
+  setSession(prev => {
+    const next = prev + 1
+
+    if (next >= 51) return 0
+
+    switchMode(next % 4 === 0 ? 'long' : 'short')
+
+    return next
+  })
+}
 
   const switchMode = (m) => {
     setMode(m)
