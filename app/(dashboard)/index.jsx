@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { useState, useEffect, useRef } from 'react'
 import ThemedView from '../../components/ThemedView'
 import ThemedLogo from '../../components/ThemedLogo'
+import { Ionicons } from '@expo/vector-icons'
 
 //Duration of modes
 const DURATIONS = {
@@ -84,12 +85,13 @@ const Home = () => {
   const progress = 1 - remaining / DURATIONS[mode]
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={styles.container}> {/*Background color */}
 
       <View style={styles.topBar}>
-        <ThemedLogo style={styles.logo} />
+        <ThemedLogo style={styles.logo} /> {/* Logo */}
+
         <Text style={styles.sessionText}>
-          session <Text style={[styles.sessionNum, { color }]}>{session}</Text>
+          Session <Text style={[styles.sessionNum, { color }]}>{session}</Text> {/*Session # */}
         </Text>
       </View>
 
@@ -116,28 +118,25 @@ const Home = () => {
         </View>
       </View>
 
-      <View style={styles.controls}>
-        <TouchableOpacity style={styles.secondaryBtn} onPress={reset}>
-          <Text style={styles.secondaryBtnText}>↺</Text>
-        </TouchableOpacity>
+      
 
-        <TouchableOpacity
-          style={[styles.playBtn, { borderColor: color, backgroundColor: color + '15' }]}
-          onPress={() => setRunning(r => !r)}
-        >
-          <Text style={[styles.playBtnText, { color }]}>
-            {running ? '⏸' : '▶'}
-          </Text>
-        </TouchableOpacity>
+   
+<View style={styles.controls}>
+  <TouchableOpacity style={styles.secondaryBtn} onPress={reset}>
+    <Ionicons name="refresh" size={20} color="#555" />
+  </TouchableOpacity>
 
-        <TouchableOpacity style={styles.secondaryBtn} onPress={() => handleComplete()}>
-          <Text style={styles.secondaryBtnText}>⏭</Text>
-        </TouchableOpacity>
-      </View>
+  <TouchableOpacity
+    style={[styles.playBtn, { borderColor: color, backgroundColor: color + '15' }]}
+    onPress={() => setRunning(r => !r)}
+  >
+    <Ionicons name={running ? 'pause' : 'play'} size={28} color={color} />
+  </TouchableOpacity>
 
-      <View style={styles.progressTrack}>
-        <View style={[styles.progressFill, { width: `${progress * 100}%`, backgroundColor: color }]} />
-      </View>
+  <TouchableOpacity style={styles.secondaryBtn} onPress={() => handleComplete()}>
+    <Ionicons name="play-skip-forward" size={20} color="#555" />
+  </TouchableOpacity>
+</View>
 
     </ThemedView>
   )
