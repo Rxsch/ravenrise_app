@@ -56,36 +56,31 @@ const Home = () => {
     return () => clearInterval(intervalRef.current) //Clean up
   }, [running, mode])
 
-  //Next timer after completion function
   const handleComplete = () => {
-  //If break go back focus
-    if (mode !== 'focus') {
+    //Focus ended go to break
+  if (mode === 'focus') {
+    switchMode(session % 4 === 0 ? 'long' : 'short')
+  } else {
+    // Break terminó → AHORA incrementa la sesión y vuelve a focus
+    setSession(prev => {
+      const next = prev + 1
+      return next >= 51 ? 1 : next
+    })
     switchMode('focus')
-    return
   }
-  //No more than 50 sessions
-  setSession(prev => {
-    const next = prev + 1
-
-    if (next >= 51) return 0
-
-    switchMode(next % 4 === 0 ? 'long' : 'short')
-
-    return next
-  })
 }
-
+  //Function to switch modes
   const switchMode = (m) => {
     setMode(m)
     setRemaining(DURATIONS[m])
     setRunning(false)
   }
-
+  //Function to reset timer
   const reset = () => {
     setRunning(false)
     setRemaining(DURATIONS[mode])
   }
-
+  //Prcentage of the progress of the time passed
   const progress = 1 - remaining / DURATIONS[mode]
 
   return (
