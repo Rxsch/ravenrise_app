@@ -1,16 +1,12 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { useFocusEffect } from 'expo-router'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import ThemedView from '../../components/ThemedView'
 import ThemedLogo from '../../components/ThemedLogo'
 import { Ionicons } from '@expo/vector-icons'
 import { Audio } from 'expo-av'
 
-//Duration of modes
-const DURATIONS = {
-  focus: 25 * 60,
-  short: 5  * 60,
-  long:  15 * 60,
-}
 //Labels
 const MODE_LABELS = {
   focus: 'FOCUS',
@@ -31,77 +27,109 @@ const fmt = (secs) => {
 }
 
 const Home = () => {
-  const [mode, setMode]           = useState('focus') //Mode being used
-  const [remaining, setRemaining] = useState(DURATIONS.focus) //Time left
-  const [running, setRunning]     = useState(false) //Running state of timmer
-  const [session, setSession]     = useState(1) //Number of completed sessions
-  const intervalRef               = useRef(null)//Stores the interval ID
+  const [mode, setMode]         = useState('focus')
+  const [running, setRunning]   = useState(false)
+  const [session, setSession]   = useState(1)
+  const [durations, setDurations] = useState({
+    focus: 25 * 60,
+    short: 5  * 60,
+    long:  15 * 60,
+    cycles: 4,
+  })
+  const [remaining, setRemaining] = useState(25 * 60)
+  const intervalRef               = useRef(null)
 
-  const color = MODE_COLORS[mode] //Color being used
+  const color = MODE_COLORS[mode]
+
+  // Carga preferencias de settings cada vez que vuelves a esta pantalla
+  useFocusEffect(
+    useCallback(() => {
+      const loadPrefs = async () => {
+        try {
+          const raw = await AsyncStorage.getItem('@prefs')
+          if (raw) {
+            const prefs = JSON.parse(raw)
+            if (prefs.durations) {
+              const d = {
+                focus:  prefs.durations.focus  * 60,
+                short:  prefs.durations.short  * 60,
+                long:   prefs.durations.long   * 60,
+                cycles: prefs.durations.cycles,
+              }
+              setDurations(d)
+              // Solo resetea el timer si no está corriendo
+              if (!running) {
+                setRemaining(d[mode])
+              }
+            }
+          }
+        } catch (e) { console.error(e) }
+      }
+      loadPrefs()
+    }, [mode, running])
+  )
 
   useEffect(() => {
-    if (running) { //If timer is running
-      intervalRef.current = setInterval(() => {  //Save the interval ID 
-        setRemaining(r => {  //Update the remaining time using current value
-          if (r <= 1) { //Remaining is less or equal to 1
-            clearInterval(intervalRef.current) //Stop
-            setRunning(false) //Pause timer
-            handleComplete() //Next session
-            return 0 //Remaining is zero
+    if (running) {
+      intervalRef.current = setInterval(() => {
+        setRemaining(r => {
+          if (r <= 1) {
+            clearInterval(intervalRef.current)
+            setRunning(false)
+            handleComplete()
+            return 0
           }
           return r - 1
         })
       }, 1000)
     } else {
-      clearInterval(intervalRef.current) //Stop interval when timer is paused
+      clearInterval(intervalRef.current)
     }
-    return () => clearInterval(intervalRef.current) //Clean up
+    return () => clearInterval(intervalRef.current)
   }, [running, mode])
 
   const handleComplete = () => {
-   //Sound
     playSound()
-    //Focus ended go to break
-  if (mode === 'focus') {
-    switchMode(session % 4 === 0 ? 'long' : 'short')
-  } else {
-    // Break terminó → AHORA incrementa la sesión y vuelve a focus
-    setSession(prev => {
-      const next = prev + 1
-      return next >= 51 ? 1 : next
-    })
-    switchMode('focus')
+    if (mode === 'focus') {
+      switchMode(session % durations.cycles === 0 ? 'long' : 'short')
+    } else {
+      setSession(prev => {
+        const next = prev + 1
+        return next >= 51 ? 1 : next
+      })
+      switchMode('focus')
+    }
   }
-}
-  //Function to switch modes
+
   const switchMode = (m) => {
     setMode(m)
-    setRemaining(DURATIONS[m])
+    setRemaining(durations[m])
     setRunning(false)
   }
-  //Function to reset timer
+
   const reset = () => {
     setRunning(false)
-    setRemaining(DURATIONS[mode])
+    setRemaining(durations[mode])
   }
-  //Sound when session is completed
+
   const playSound = async () => {
-    const { sound } = await Audio.Sound.createAsync(
-      require('../../assets/sounds/crowSoundEffect.mp3')
-    )
-    await sound.playAsync()
+    try {
+      const { sound } = await Audio.Sound.createAsync(
+        require('../../assets/sounds/crowSoundEffect.mp3')
+      )
+      await sound.playAsync()
+    } catch (e) { console.error(e) }
   }
-  //Percentage of the progress of the time passed
-  const progress = 1 - remaining / DURATIONS[mode]
+
+  const progress = 1 - remaining / durations[mode]
 
   return (
-    <ThemedView style={styles.container}> {/*Background color */}
+    <ThemedView style={styles.container}>
 
       <View style={styles.topBar}>
-        <ThemedLogo style={styles.logo} /> {/* Logo */}
-
+        <ThemedLogo style={styles.logo} />
         <Text style={styles.sessionText}>
-          Session <Text style={[styles.sessionNum, { color }]}>{session}</Text> {/*Session # */}
+          Session <Text style={[styles.sessionNum, { color }]}>{session}</Text>
         </Text>
       </View>
 
@@ -128,35 +156,32 @@ const Home = () => {
         </View>
       </View>
 
-      
+      <View style={styles.controls}>
+        <TouchableOpacity
+          style={[styles.secondaryBtn, { borderColor: color, backgroundColor: color + '15' }]}
+          onPress={reset}
+        >
+          <Ionicons name="refresh" size={22} color={color} />
+        </TouchableOpacity>
 
-   
-<View style={styles.controls}>
-  {/* Reset */}
-<TouchableOpacity
-  style={[styles.secondaryBtn, { borderColor: color, backgroundColor: color + '15' }]}
-  onPress={reset}
->
-  <Ionicons name="refresh" size={22} color={color} />
-</TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.playBtn, { borderColor: color, backgroundColor: color + '15' }]}
+          onPress={() => setRunning(r => !r)}
+        >
+          <Ionicons name={running ? 'pause' : 'play'} size={28} color={color} />
+        </TouchableOpacity>
 
-{/* Play/Pause */}
-<TouchableOpacity
-  style={[styles.playBtn, { borderColor: color, backgroundColor: color + '15' }]}
-  onPress={() => setRunning(r => !r)}
->
-  <Ionicons name={running ? 'pause' : 'play'} size={28} color={color} />
-</TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.secondaryBtn, { borderColor: color, backgroundColor: color + '15' }]}
+          onPress={() => handleComplete()}
+        >
+          <Ionicons name="play-skip-forward" size={22} color={color} />
+        </TouchableOpacity>
+      </View>
 
-{/* Skip */}
-<TouchableOpacity
-  style={[styles.secondaryBtn, { borderColor: color, backgroundColor: color + '15' }]}
-  onPress={() => handleComplete()}
->
-  <Ionicons name="play-skip-forward" size={22} color={color} />
-</TouchableOpacity>
-
-</View>
+      <View style={styles.progressTrack}>
+        <View style={[styles.progressFill, { width: `${progress * 100}%`, backgroundColor: color }]} />
+      </View>
 
     </ThemedView>
   )
@@ -167,19 +192,18 @@ export default Home
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 60,
     paddingHorizontal: 24,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
- topBar: {
-  position: 'absolute',
-  top: 60,
-  left: 24,
-  right: 24,
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'space-between',
- },
+  topBar: {
+    position: 'absolute',
+    top: 60,
+    left: 24,
+    right: 24,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   logo: {
     width: 48,
     height: 48,
@@ -215,7 +239,6 @@ const styles = StyleSheet.create({
   timerWrap: {
     alignItems: 'center',
     marginBottom: 40,
-    marginTop: 90,
   },
   ring: {
     width: 220,
@@ -254,20 +277,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  playBtnText: {
-    fontSize: 26,
-  },
- secondaryBtn: {
-  width: 48,
-  height: 48,
-  borderRadius: 24,
-  borderWidth: 1,
-  alignItems: 'center',
-  justifyContent: 'center',
-},
-  secondaryBtnText: {
-    fontSize: 18,
-    color: '#555',
+  secondaryBtn: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   progressTrack: {
     height: 3,
