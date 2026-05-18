@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import ThemedView from '../../components/ThemedView'
 import ThemedLogo from '../../components/ThemedLogo'
 import { Ionicons } from '@expo/vector-icons'
+import { Audio } from 'expo-av'
 
 //Duration of modes
 const DURATIONS = {
@@ -58,6 +59,8 @@ const Home = () => {
   }, [running, mode])
 
   const handleComplete = () => {
+   //Sound
+    playSound()
     //Focus ended go to break
   if (mode === 'focus') {
     switchMode(session % 4 === 0 ? 'long' : 'short')
@@ -81,7 +84,14 @@ const Home = () => {
     setRunning(false)
     setRemaining(DURATIONS[mode])
   }
-  //Prcentage of the progress of the time passed
+  //Sound when session is completed
+  const playSound = async () => {
+    const { sound } = await Audio.Sound.createAsync(
+      require('../../assets/sounds/crowSoundEffect.mp3')
+    )
+    await sound.playAsync()
+  }
+  //Percentage of the progress of the time passed
   const progress = 1 - remaining / DURATIONS[mode]
 
   return (
