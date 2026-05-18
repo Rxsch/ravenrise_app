@@ -122,20 +122,30 @@ const Home = () => {
 
    
 <View style={styles.controls}>
-  <TouchableOpacity style={styles.secondaryBtn} onPress={reset}>
-    <Ionicons name="refresh" size={20} color="#555" />
-  </TouchableOpacity>
+  {/* Reset */}
+<TouchableOpacity
+  style={[styles.secondaryBtn, { borderColor: color, backgroundColor: color + '15' }]}
+  onPress={reset}
+>
+  <Ionicons name="refresh" size={22} color={color} />
+</TouchableOpacity>
 
-  <TouchableOpacity
-    style={[styles.playBtn, { borderColor: color, backgroundColor: color + '15' }]}
-    onPress={() => setRunning(r => !r)}
-  >
-    <Ionicons name={running ? 'pause' : 'play'} size={28} color={color} />
-  </TouchableOpacity>
+{/* Play/Pause */}
+<TouchableOpacity
+  style={[styles.playBtn, { borderColor: color, backgroundColor: color + '15' }]}
+  onPress={() => setRunning(r => !r)}
+>
+  <Ionicons name={running ? 'pause' : 'play'} size={28} color={color} />
+</TouchableOpacity>
 
-  <TouchableOpacity style={styles.secondaryBtn} onPress={() => handleComplete()}>
-    <Ionicons name="play-skip-forward" size={20} color="#555" />
-  </TouchableOpacity>
+{/* Skip */}
+<TouchableOpacity
+  style={[styles.secondaryBtn, { borderColor: color, backgroundColor: color + '15' }]}
+  onPress={() => handleComplete()}
+>
+  <Ionicons name="play-skip-forward" size={22} color={color} />
+</TouchableOpacity>
+
 </View>
 
     </ThemedView>
@@ -149,13 +159,17 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 60,
     paddingHorizontal: 24,
+    justifyContent: 'center'
   },
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 32,
-  },
+ topBar: {
+  position: 'absolute',
+  top: 60,
+  left: 24,
+  right: 24,
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+ },
   logo: {
     width: 48,
     height: 48,
@@ -190,7 +204,8 @@ const styles = StyleSheet.create({
   },
   timerWrap: {
     alignItems: 'center',
-    marginBottom: 48,
+    marginBottom: 40,
+    marginTop: 90,
   },
   ring: {
     width: 220,
@@ -232,16 +247,14 @@ const styles = StyleSheet.create({
   playBtnText: {
     fontSize: 26,
   },
-  secondaryBtn: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: '#2a2a2a',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#111',
-  },
+ secondaryBtn: {
+  width: 48,
+  height: 48,
+  borderRadius: 24,
+  borderWidth: 1,
+  alignItems: 'center',
+  justifyContent: 'center',
+},
   secondaryBtnText: {
     fontSize: 18,
     color: '#555',
